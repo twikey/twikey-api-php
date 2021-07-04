@@ -31,7 +31,7 @@
     ],
     "homepage": "https://api.twikey.com",
     "require": {
-        "php": "^7.2.5 || ^8.0",
+        "php": "^7.4 || ^8.0",
         "psr/http-client": "*",
         "ext-json": "*",
         "ext-openssl": "*"

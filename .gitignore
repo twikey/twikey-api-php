@@ -8,3 +8,5 @@ php-scoper.phar
 php-scoper.phar.pubkey
 .php-cs-fixer.cache
 .phpunit.result.cache
+tests/bootstrap.php
+twikey-api-php.iml
