@@ -4,6 +4,7 @@ namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
+use Twikey\Api\Helper\PaylinkCallback;
 use Twikey\Api\TwikeyException;
 
 class LinkGateway extends BaseGateway
@@ -45,10 +46,19 @@ class LinkGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed($lang = 'en')
+    public function feed(PaylinkCallback $callback,$lang = 'en')
     {
-        $response = $this->request('GET', "/creditor/payment/link/feed", [], $lang);
-        $server_output = $this->checkResponse($response, "Retrieving paymentlink feed!");
-        return json_decode($server_output);
+        $count = 0;
+        do {
+            $response = $this->request('GET', "/creditor/payment/link/feed", [], $lang);
+            $server_output = $this->checkResponse($response, "Retrieving paymentlink feed!");
+            $links = json_decode($server_output);
+            foreach ($links as $pl){
+                $count++;
+                $callback->handle($pl);
+            }
+        }
+        while(count($links) > 0);
+        return $count;
     }
 }

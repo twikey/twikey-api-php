@@ -3,6 +3,7 @@
 namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientInterface;
+use Twikey\Api\Helper\TransactionCallback;
 use Twikey\Api\TwikeyException;
 
 class TransactionGateway extends BaseGateway
@@ -45,11 +46,20 @@ class TransactionGateway extends BaseGateway
      * Read until empty
      * @throws TwikeyException
      */
-    public function feed($lang = 'en')
+    public function feed(TransactionCallback $callback, $lang = 'en')
     {
-        $response = $this->request('GET', "/creditor/transaction", [], $lang);
-        $server_output = $this->checkResponse($response, "Retrieving transaction feed!");
-        return json_decode($server_output);
+        $count = 0;
+        do {
+            $response = $this->request('GET', "/creditor/transaction", [], $lang);
+            $server_output = $this->checkResponse($response, "Retrieving transaction feed!");
+            $transactions = json_decode($server_output);
+            foreach ($transactions->Entries as $tx){
+                $count++;
+                $callback->handle($tx);
+            }
+        }
+        while(count($transactions->Entries) > 0);
+        return $count;
     }
 
     /**

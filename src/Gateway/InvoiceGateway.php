@@ -4,6 +4,7 @@ namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
+use Twikey\Api\Helper\InvoiceCallback;
 use Twikey\Api\TwikeyException;
 
 class InvoiceGateway extends BaseGateway
@@ -41,10 +42,19 @@ class InvoiceGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed($lang = 'en')
+    public function feed(InvoiceCallback $callback, $lang = 'en')
     {
-        $response = $this->request('GET', "/creditor/invoice", [], $lang);
-        $server_output = $this->checkResponse($response, "Retrieving invoice feed!");
-        return json_decode($server_output);
+        $count = 0;
+        do {
+            $response = $this->request('GET', "/creditor/invoice", [], $lang);
+            $server_output = $this->checkResponse($response, "Retrieving invoice feed!");
+            $invoices = json_decode($server_output);
+            foreach ($invoices as $invoice){
+                $count++;
+                $callback->handle($invoice);
+            }
+        }
+        while(count($invoices) > 0);
+        return $count;
     }
 }

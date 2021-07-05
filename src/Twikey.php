@@ -6,7 +6,7 @@ use Exception;
 use Psr\Http\Client\ClientInterface;
 use Twikey\Api\Gateway\InvoiceGateway;
 use Twikey\Api\Gateway\LinkGateway;
-use Twikey\Api\Gateway\MandateGateway;
+use Twikey\Api\Gateway\DocumentGateway;
 use Twikey\Api\Gateway\TransactionGateway;
 
 const TWIKEY_DEBUG = false;
@@ -17,7 +17,7 @@ class Twikey
 
     protected string $lang = 'en';
 
-    public MandateGateway $mandate;
+    public DocumentGateway $document;
     public TransactionGateway $transaction;
     public LinkGateway $link;
     public InvoiceGateway $invoice;
@@ -29,7 +29,7 @@ class Twikey
             $endpoint = "https://api.beta.twikey.com";
         }
         $apiKey = trim($apikey);
-        $this->mandate = new MandateGateway($httpClient,$endpoint, $apiKey);
+        $this->document = new DocumentGateway($httpClient,$endpoint, $apiKey);
         $this->transaction = new TransactionGateway($httpClient,$endpoint, $apiKey);
         $this->link = new LinkGateway($httpClient,$endpoint, $apiKey);
         $this->invoice = new InvoiceGateway($httpClient, $endpoint, $apiKey);
@@ -38,9 +38,9 @@ class Twikey
     /**
      * @throws TwikeyException
      */
-    public static function validateSignature(string $website_key, string $mandateNumber, string $status, string $token, string $signature) : bool
+    public static function validateSignature(string $website_key, string $documentNumber, string $status, string $token, string $signature) : bool
     {
-        $calculated = hash_hmac('sha256', sprintf("%s/%s/%s", $mandateNumber, $status, $token), $website_key);
+        $calculated = hash_hmac('sha256', sprintf("%s/%s/%s", $documentNumber, $status, $token), $website_key);
         if (!hash_equals($calculated, $signature)) {
             error_log("Invalid signature : expected=" . $calculated . ' was=' . $signature, 0);
             throw new TwikeyException('Invalid signature');

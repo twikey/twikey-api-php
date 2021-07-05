@@ -4,10 +4,10 @@ namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
-use Twikey\Api\Helper\MandateCallback;
+use Twikey\Api\Helper\DocumentCallback;
 use Twikey\Api\TwikeyException;
 
-class MandateGateway extends BaseGateway
+class DocumentGateway extends BaseGateway
 {
     public function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
     {
@@ -52,29 +52,30 @@ class MandateGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed(MandateCallback $callback, $lang = 'en')
+    public function feed(DocumentCallback $callback, $lang = 'en')
     {
-        $response = $this->request('GET', "/creditor/mandate", [], $lang);
-        $server_output = $this->checkResponse($response, "Retrieving mandate feed!");
-        $updates = json_decode($server_output);
-        if ($callback != null) {
-            foreach ($updates->Messages as $update) {
-                $isUpdate = isset($update->AmdmntRsn);
-                $isCancel = isset($update->CxlRsn);
+        do {
+            $response = $this->request('GET', "/creditor/mandate", [], $lang);
+            $server_output = $this->checkResponse($response, "Retrieving mandate feed!");
+            $updates = json_decode($server_output);
+            if ($callback != null) {
+                foreach ($updates->Messages as $update) {
+                    $isUpdate = isset($update->AmdmntRsn);
+                    $isCancel = isset($update->CxlRsn);
 
-                //print_r($update);
-                if (!$isUpdate && !$isCancel) {
-                    // new mandate
-                    $callback->handleNew($update);
-                } else if ($isUpdate) {
-                    // handle update
-                    $callback->handleNew($update);
-                } else if ($isCancel) {
-                    // handle cancel
-                    $callback->handleCancel($update);
+                    //print_r($update);
+                    if (!$isUpdate && !$isCancel) {
+                        // new mandate
+                        $callback->handleNew($update);
+                    } else if ($isUpdate) {
+                        // handle update
+                        $callback->handleNew($update);
+                    } else if ($isCancel) {
+                        // handle cancel
+                        $callback->handleCancel($update);
+                    }
                 }
             }
-        }
-        return $updates;
+        } while(count($updates->Messages) > 0);
     }
 }

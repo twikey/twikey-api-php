@@ -6,7 +6,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Twikey\Api\Helper\MandateCallback;
+use Twikey\Api\Helper\DocumentCallback;
+use Twikey\Api\Helper\TransactionCallback;
 
 class TwikeyTest extends TestCase
 {
@@ -15,11 +16,17 @@ class TwikeyTest extends TestCase
     private static ClientInterface $httpClient;
 
     /**
-     * @beforeClass
+     * @before
      */
-    public static function setupBase(): void
+    public function setup(): void
     {
-        self::$APIKEY = getenv('APIKEY');
+        if (getenv('TWIKEY_API_KEY') == "") {
+            $this->markTestSkipped(
+                'The MySQLi extension is not available.'
+            );
+        }
+
+        self::$APIKEY = getenv('TWIKEY_API_KEY');
         self::$CT = getenv('CT');
         self::$httpClient = new Client([
             'http_errors' => false,
@@ -53,15 +60,15 @@ class TwikeyTest extends TestCase
             "contractNumber" => "",
         );
 
-        $contract = $twikey->mandate->create($data);
+        $contract = $twikey->document->create($data);
         $this->assertIsString($contract->url);
         $this->assertIsString($contract->mndtId);
         $this->assertIsString($contract->key);
 
-        $twikey->mandate->feed(new SampleMandateCallback());
+        $twikey->document->feed(new SampleDocumentCallback());
 
-        // Remove the mandate again
-        $twikey->mandate->cancel($contract->mndtId);
+        // Remove the document again
+        $twikey->document->cancel($contract->mndtId);
     }
 
     public function testCreateTransaction()
@@ -90,17 +97,14 @@ class TwikeyTest extends TestCase
             throw new InvalidArgumentException('Invalid apikey');
 
         $twikey = new Twikey(self::$httpClient,self::$APIKEY,true);
-        $txs = $twikey->transaction->feed();
-        $this->assertIsArray($txs->Entries);
-        while (count($txs->Entries) > 0) {
-            for ($i = 0; $i < count($txs->Entries); $i++) {
-                $tx = $txs->Entries[$i];
-                $this->assertIsNumeric($tx->id);
-                $this->assertIsNumeric($tx->contractId);
-                $this->assertNotEmpty($tx->date);
+        $count = $twikey->transaction->feed(new class implements TransactionCallback{
+            public function handle($transaction)
+            {
+                print("Transaction " . $transaction->id . ' @ '. $transaction->date . ' has '. $transaction->state . "\n");
+
             }
-            $txs = $twikey->transaction->feed();
-        }
+        });
+        $this->assertIsNumeric($count);
     }
 
     public function testWebhook()
@@ -109,7 +113,7 @@ class TwikeyTest extends TestCase
     }
 }
 
-class SampleMandateCallback implements MandateCallback {
+class SampleDocumentCallback implements DocumentCallback {
 
     function handleNew($update)
     {
