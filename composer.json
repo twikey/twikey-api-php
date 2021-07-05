@@ -32,7 +32,7 @@
     "homepage": "https://api.twikey.com",
     "require": {
         "php": "^7.4 || ^8.0",
-        "psr/http-client": "*",
+        "psr/http-client": "^1.0.1",
         "ext-json": "*",
         "ext-openssl": "*"
     },
