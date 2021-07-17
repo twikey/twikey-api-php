@@ -22,7 +22,12 @@ class TwikeyTest extends TestCase
     {
         if (getenv('TWIKEY_API_KEY') == "") {
             $this->markTestSkipped(
-                'The MySQLi extension is not available.'
+                'The TWIKEY_API_KEY is not available.'
+            );
+        }
+        if (getenv('CT') == "") {
+            $this->markTestSkipped(
+                'The CT (template) is not available.'
             );
         }
 
@@ -76,9 +81,18 @@ class TwikeyTest extends TestCase
         if (!self::$APIKEY)
             throw new InvalidArgumentException('Invalid apikey');
 
+        if (!self::$APIKEY)
+            throw new InvalidArgumentException('Invalid apikey');
+
+        if (getenv('mndtNumber') == "") {
+            $this->markTestSkipped(
+                'The mndtNumber is not available.'
+            );
+        }
+
         $twikey = new Twikey(self::$httpClient,self::$APIKEY,true);
         $data = array(
-            "mndtId" => "CORERECURRENTNL16318",
+            "mndtId" => getenv('mndtNumber'),
             "message" => "Test Message",
             "ref" => "Merchant Reference",
             "amount" => 10.00, // 10 euro
@@ -110,6 +124,16 @@ class TwikeyTest extends TestCase
     public function testWebhook()
     {
         $this->assertTrue(Twikey::validateWebhook('1234', "abc=123&name=abc", "55261CBC12BF62000DE1371412EF78C874DBC46F513B078FB9FF8643B2FD4FC2"));
+    }
+
+    public function testValidateSignature()
+    {
+        $websiteKey = "BE04823F732EDB2B7F82252DDAF6DE787D647B43A66AE97B32773F77CCF12765";
+        $doc = "MYDOC";
+        $status = "ok";
+        $signatureInOutcome = "8C56F94905BBC9E091CB6C4CEF4182F7E87BD94312D1DD16A61BF7C27C18F569";
+
+        $this->assertTrue(Twikey::validateSignature($websiteKey, $doc, $status, "", $signatureInOutcome));
     }
 }
 

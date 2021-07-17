@@ -40,7 +40,11 @@ class Twikey
      */
     public static function validateSignature(string $website_key, string $documentNumber, string $status, string $token, string $signature) : bool
     {
-        $calculated = hash_hmac('sha256', sprintf("%s/%s/%s", $documentNumber, $status, $token), $website_key);
+        $payload = sprintf("%s/%s", $documentNumber, $status);
+        if ($token != "") {
+            $payload = sprintf("%s/%s/%s", $documentNumber, $status, $token);
+        }
+        $calculated = strtoupper(hash_hmac('sha256', $payload , $website_key));
         if (!hash_equals($calculated, $signature)) {
             error_log("Invalid signature : expected=" . $calculated . ' was=' . $signature, 0);
             throw new TwikeyException('Invalid signature');
@@ -56,10 +60,10 @@ class Twikey
     {
         $calculated = strtoupper(hash_hmac('sha256', urldecode($queryString), $apikey));
 
-        error_log("Calculated: " . $calculated);
-        error_log("Given: " . $signatureHeader);
-        error_log("Message: " . $queryString);
-        error_log("Same: " . ($calculated == $signatureHeader));
+//        error_log("Calculated: " . $calculated);
+//        error_log("Given: " . $signatureHeader);
+//        error_log("Message: " . $queryString);
+//        error_log("Same: " . ($calculated == $signatureHeader));
 
         return hash_equals($calculated, $signatureHeader);
     }

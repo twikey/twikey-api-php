@@ -1,6 +1,6 @@
 {
-    "name": "twikey/api",
-    "description": "Humble php client to interface with the Twikey api",
+    "name": "twikey/twikey-api-php",
+    "description": "Php client to interface with the Twikey api",
     "type": "library",
     "keywords": [
         "payments",
