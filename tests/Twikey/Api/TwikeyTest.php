@@ -73,7 +73,7 @@ class TwikeyTest extends TestCase
         $twikey->document->feed(new SampleDocumentCallback());
 
         // Remove the document again
-        $twikey->document->cancel($contract->mndtId);
+        $twikey->document->cancel($contract->mndtId, "cancel");
     }
 
     public function testCreateTransaction()

@@ -40,9 +40,9 @@ class DocumentGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function cancel($mndtId, $lang = 'en')
+    public function cancel($mndtId, $rsn, $lang = 'en')
     {
-        $response = $this->request('DELETE', sprintf("/creditor/mandate?mndtId=%s", $mndtId), [], $lang);
+        $response = $this->request('DELETE', sprintf("/creditor/mandate?mndtId=%s&rsn=%s", $mndtId, $rsn), [], $lang);
         $server_output = $this->checkResponse($response, "Cancel a mandate!");
         return json_decode($server_output);
     }
