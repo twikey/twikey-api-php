@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 namespace Twikey\Api\Gateway;
 
 use Exception;
@@ -9,7 +10,7 @@ use Twikey\Api\Twikey;
 use Twikey\Api\TwikeyException;
 use const Twikey\Api\TWIKEY_DEBUG;
 
-class BaseGateway
+abstract class BaseGateway
 {
     /**
      * @var ClientInterface
@@ -19,7 +20,7 @@ class BaseGateway
     private string $endpoint;
     private string $apikey;
 
-    protected function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
+    public function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
     {
         $this->httpClient = $httpClient;
         $this->endpoint = $endpoint;

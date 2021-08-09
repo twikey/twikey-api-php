@@ -1,18 +1,13 @@
 <?php
-
+declare(strict_types=1);
 namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientInterface;
-use Twikey\Api\Helper\TransactionCallback;
+use Twikey\Api\Callback\TransactionCallback;
 use Twikey\Api\TwikeyException;
 
 class TransactionGateway extends BaseGateway
 {
-    public function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
-    {
-        parent::__construct($httpClient, $endpoint, $apikey);
-    }
-
     /**
      * @param $data
      * @return array|mixed|object

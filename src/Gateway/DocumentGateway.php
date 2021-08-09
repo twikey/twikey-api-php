@@ -1,18 +1,14 @@
 <?php
-
+declare(strict_types=1);
 namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
-use Twikey\Api\Helper\DocumentCallback;
+use Twikey\Api\Callback\DocumentCallback;
 use Twikey\Api\TwikeyException;
 
 class DocumentGateway extends BaseGateway
 {
-    public function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
-    {
-        parent::__construct($httpClient, $endpoint, $apikey);
-    }
 
     /**
      * @throws TwikeyException
