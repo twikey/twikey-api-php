@@ -69,7 +69,7 @@ class DocumentGateway extends BaseGateway
                         $callback->handleNew($update);
                     } else if ($isUpdate) {
                         // handle update
-                        $callback->handleNew($update);
+                        $callback->handleUpdate($update);
                     } else if ($isCancel) {
                         // handle cancel
                         $callback->handleCancel($update);
