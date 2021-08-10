@@ -1,9 +1,9 @@
 <?php
-namespace Twikey\Api\Helper;
+namespace Twikey\Api\Callback;
 
 /**
  * Interface InvoiceCallback See SampleInvoiceCallback in the tests for a sample implementation
- * @package Twikey\Api\Helper
+ * @package Twikey\Api\Callback
  */
 interface InvoiceCallback
 {

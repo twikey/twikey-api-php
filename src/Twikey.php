@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 namespace Twikey\Api;
 
 use Exception;
@@ -8,6 +8,7 @@ use Twikey\Api\Gateway\InvoiceGateway;
 use Twikey\Api\Gateway\LinkGateway;
 use Twikey\Api\Gateway\DocumentGateway;
 use Twikey\Api\Gateway\TransactionGateway;
+use Twikey\Api\Exception\TwikeyException;
 
 const TWIKEY_DEBUG = false;
 
@@ -68,12 +69,3 @@ class Twikey
         return hash_equals($calculated, $signatureHeader);
     }
 }
-
-/**
- * Class TwikeyException
- * @package Twikey\Api
- */
-class TwikeyException extends Exception
-{
-}
-

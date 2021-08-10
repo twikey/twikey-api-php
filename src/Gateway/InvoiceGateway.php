@@ -1,19 +1,14 @@
 <?php
-
+declare(strict_types=1);
 namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
-use Twikey\Api\Helper\InvoiceCallback;
+use Twikey\Api\Callback\InvoiceCallback;
 use Twikey\Api\TwikeyException;
 
 class InvoiceGateway extends BaseGateway
 {
-    public function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
-    {
-        parent::__construct($httpClient, $endpoint, $apikey);
-    }
-
     /**
      * @throws TwikeyException
      * @throws ClientExceptionInterface

@@ -6,8 +6,8 @@ use GuzzleHttp\Client;
 use GuzzleHttp\ClientInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use Twikey\Api\Helper\DocumentCallback;
-use Twikey\Api\Helper\TransactionCallback;
+use Twikey\Api\Callback\DocumentCallback;
+use Twikey\Api\Callback\TransactionCallback;
 
 class TwikeyTest extends TestCase
 {

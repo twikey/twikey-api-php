@@ -1,19 +1,14 @@
 <?php
-
+declare(strict_types=1);
 namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
-use Twikey\Api\Helper\PaylinkCallback;
+use Twikey\Api\Callback\PaylinkCallback;
 use Twikey\Api\TwikeyException;
 
 class LinkGateway extends BaseGateway
 {
-    public function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
-    {
-        parent::__construct($httpClient, $endpoint, $apikey);
-    }
-
     /**
      * @throws TwikeyException
      */
