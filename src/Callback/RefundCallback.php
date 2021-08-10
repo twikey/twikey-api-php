@@ -1,9 +1,9 @@
 <?php
-namespace Twikey\Api\Helper;
+namespace Twikey\Api\Callback;
 
 /**
  * Interface RefundCallback
- * @package Twikey\Api\Helper
+ * @package Twikey\Api\Callback
  */
 interface RefundCallback
 {

@@ -3,16 +3,11 @@
 namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientExceptionInterface;
-use Psr\Http\Client\ClientInterface;
-use Twikey\Api\Helper\RefundCallback;
+use Twikey\Api\Callback\RefundCallback;
 use Twikey\Api\TwikeyException;
 
 class RefundGateway extends BaseGateway
 {
-    public function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
-    {
-        parent::__construct($httpClient, $endpoint, $apikey);
-    }
 
     /**
      * Read until empty
