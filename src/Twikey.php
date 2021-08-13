@@ -7,6 +7,7 @@ use Psr\Http\Client\ClientInterface;
 use Twikey\Api\Gateway\InvoiceGateway;
 use Twikey\Api\Gateway\LinkGateway;
 use Twikey\Api\Gateway\DocumentGateway;
+use Twikey\Api\Gateway\RefundGateway;
 use Twikey\Api\Gateway\TransactionGateway;
 use Twikey\Api\Exception\TwikeyException;
 
@@ -22,6 +23,7 @@ class Twikey
     public TransactionGateway $transaction;
     public LinkGateway $link;
     public InvoiceGateway $invoice;
+    public RefundGateway $refund;
 
     public function __construct(ClientInterface $httpClient, string $apikey, bool $testMode = false)
     {
@@ -34,6 +36,7 @@ class Twikey
         $this->transaction = new TransactionGateway($httpClient,$endpoint, $apiKey);
         $this->link = new LinkGateway($httpClient,$endpoint, $apiKey);
         $this->invoice = new InvoiceGateway($httpClient, $endpoint, $apiKey);
+        $this->refund = new RefundGateway($httpClient, $endpoint, $apiKey);
     }
 
     /**
