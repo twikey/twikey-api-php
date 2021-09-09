@@ -7,7 +7,7 @@ use Psr\Http\Client\ClientExceptionInterface;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Twikey\Api\Twikey;
-use Twikey\Api\TwikeyException;
+use Twikey\Api\Exception\TwikeyException;
 use const Twikey\Api\TWIKEY_DEBUG;
 
 abstract class BaseGateway
