@@ -10,6 +10,7 @@ use Twikey\Api\Gateway\DocumentGateway;
 use Twikey\Api\Gateway\RefundGateway;
 use Twikey\Api\Gateway\TransactionGateway;
 use Twikey\Api\Exception\TwikeyException;
+use Twikey\Api\Gateway\CollectionGateway;
 
 const TWIKEY_DEBUG = false;
 
@@ -24,6 +25,7 @@ class Twikey
     public LinkGateway $link;
     public InvoiceGateway $invoice;
     public RefundGateway $refund;
+    public CollectionGateway $collection;
 
     public function __construct(ClientInterface $httpClient, string $apikey, bool $testMode = false)
     {
@@ -33,10 +35,11 @@ class Twikey
         }
         $apiKey = trim($apikey);
         $this->document = new DocumentGateway($httpClient,$endpoint, $apiKey);
-        $this->transaction = new TransactionGateway($httpClient,$endpoint, $apiKey);
+        $this->transaction = new TransactionGateway($httpClient, $endpoint, $apiKey);
         $this->link = new LinkGateway($httpClient,$endpoint, $apiKey);
         $this->invoice = new InvoiceGateway($httpClient, $endpoint, $apiKey);
         $this->refund = new RefundGateway($httpClient, $endpoint, $apiKey);
+        $this->collection = new CollectionGateway($httpClient, $endpoint, $apiKey);
     }
 
     /**
