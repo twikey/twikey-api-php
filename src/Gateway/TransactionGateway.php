@@ -66,4 +66,16 @@ class TransactionGateway extends BaseGateway
         $server_output = $this->checkResponse($response, "Retrieving transaction feed!");
         return json_decode($server_output);
     }
+
+    /**
+     * @throws TwikeyException
+     * @throws ClientExceptionInterface
+     */
+    public function cancel(?string $id, ?string $ref, $lang = 'en')
+    {
+        $response = $this->request('DELETE', sprintf('/creditor/transaction%s%s%s', isset($id) || isset($ref) ? '?' : null, isset($id) ? "id=$id" : null, isset($ref) ? sprintf("%ref=$ref", isset($id) ? '&' : null) : null, [], $lang));
+        $server_output = $this->checkResponse($response, "Cancel a transaction!");
+        return json_decode($server_output);
+    }
+
 }

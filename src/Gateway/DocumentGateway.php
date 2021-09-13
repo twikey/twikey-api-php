@@ -22,7 +22,18 @@ class DocumentGateway extends BaseGateway
     }
 
     /**
-     * @throws TwikeyException     *
+     * @throws TwikeyException
+     * @throws ClientExceptionInterface
+     */
+    public function sign($data, $lang = 'en')
+    {
+        $response = $this->request('POST', '/creditor/sign', ['form_params' => $data], $lang);
+        $server_output = $this->checkResponse($response, "Signing a mandate!");
+        return json_decode($server_output);
+    }
+
+    /**
+     * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
     public function update($data, $lang = 'en')
@@ -74,4 +85,16 @@ class DocumentGateway extends BaseGateway
             }
         } while(count($updates->Messages) > 0);
     }
+
+    /**
+     * @throws TwikeyException
+     * @throws ClientExceptionInterface
+     */
+    public function get(string $mndtId, bool $force = false, $lang = 'en')
+    {
+        $response = $this->request('GET', sprintf("/creditor/mandate/detail?mndtId=%s&force=%s", $mndtId, $force), [], $lang);
+        $server_output = $this->checkResponse($response, "Get mandate details!");
+        return json_decode($server_output);
+    }
+
 }
