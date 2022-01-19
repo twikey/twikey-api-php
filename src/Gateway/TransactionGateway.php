@@ -21,7 +21,7 @@ class TransactionGateway extends BaseGateway
     }
 
     /**
-     * Note: This is rate limited
+     * Note this is rate limited
      * @throws TwikeyException
      */
     public function get($txid, $ref, $lang = 'en')

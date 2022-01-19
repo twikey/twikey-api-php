@@ -87,6 +87,7 @@ class DocumentGateway extends BaseGateway
     }
 
     /**
+     * Note this is rate limited
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
