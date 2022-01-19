@@ -73,7 +73,10 @@ class TransactionGateway extends BaseGateway
      */
     public function cancel(?string $id, ?string $ref, $lang = 'en')
     {
-        $response = $this->request('DELETE', sprintf('/creditor/transaction%s%s%s', isset($id) || isset($ref) ? '?' : null, isset($id) ? "id=$id" : null, isset($ref) ? sprintf("%ref=$ref", isset($id) ? '&' : null) : null, [], $lang));
+        $queryPrefix = isset($id) || isset($ref) ? '?' : null;
+        $queryId = isset($id) ? "id=$id" : null;
+        $queryRef = isset($ref) ? sprintf("%ref=$ref", isset($id) ? '&' : null) : null;
+        $response = $this->request('DELETE', sprintf('/creditor/transaction%s%s%s', $queryPrefix, $queryId, $queryRef), [], $lang);
         $server_output = $this->checkResponse($response, "Cancel a transaction!");
         return json_decode($server_output);
     }
