@@ -26,11 +26,11 @@ To use the Twikey API client, the following things are required:
 By far the easiest way to install the Twikey API client is to require it
 with [Composer](http://getcomposer.org/doc/00-intro.md).
 
-    $ composer require twikey/twikey-api-php:^0.1.0
+    $ composer require twikey/twikey-api-php:^0.2.0
 
     {
         "require": {
-            "twikey/twikey-api-php": "^0.1.0"
+            "twikey/twikey-api-php": "^0.2.0"
         }
     }
 
