@@ -29,9 +29,9 @@ class LinkGateway extends BaseGateway
         if (empty($ref)) {
             $item = "id=" . $linkid;
         } else {
-            $item = "ref=" . $ref;
+            $item = "ref=" . urlencode($ref);
         }
-        $response = $this->request('POST', sprintf("/creditor/payment/link?%s", $item), [], $lang);
+        $response = $this->request('GET', sprintf("/creditor/payment/link?%s", $item), [], $lang);
         $server_output = $this->checkResponse($response, "Verifying a paymentlink ");
         return json_decode($server_output);
     }
