@@ -2,29 +2,21 @@
 declare(strict_types=1);
 namespace Twikey\Api\Gateway;
 
-use Exception;
 use Psr\Http\Client\ClientExceptionInterface;
-use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
-use Twikey\Api\Twikey;
 use Twikey\Api\Exception\TwikeyException;
-use const Twikey\Api\TWIKEY_DEBUG;
+use Twikey\Api\Twikey;
 
 abstract class BaseGateway
 {
     /**
-     * @var ClientInterface
+     * @var Twikey
      */
-    private ClientInterface $httpClient;
+    protected Twikey $twikey;
 
-    private string $endpoint;
-    private string $apikey;
-
-    public function __construct(ClientInterface $httpClient, string $endpoint, string $apikey)
+    public function __construct(Twikey $twikey)
     {
-        $this->httpClient = $httpClient;
-        $this->endpoint = $endpoint;
-        $this->apikey = $apikey;
+        $this->twikey = $twikey;
     }
 
     /**
@@ -34,49 +26,14 @@ abstract class BaseGateway
      * @return ResponseInterface
      * @throws ClientExceptionInterface
      */
-    public function request(string $method, string $uri = '', array $options = [], string $lang = 'en'): ResponseInterface
-    {
-        $fulluri = sprintf("%s/%s", $this->endpoint, $uri);
-        $headers = $options['headers'] ?? [];
-        $headers = array_merge($headers, [
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/x-www-form-urlencoded',
-            "User-Agent" => "twikey-php/v" . Twikey::VERSION,
-            "Accept-Language" => $lang,
-            "Authorization" => 'Bearer ' . $this->apikey
-        ]);
-        $options['headers'] = $headers;
-        return $this->httpClient->request($method, $fulluri, $options);
+    protected function request(string $method, string $uri = '', array $options = []): ResponseInterface {
+        return $this->twikey->request($method,$uri,$options);
     }
 
     /**
      * @throws TwikeyException
      */
-    protected function checkResponse($response, $context = "No context") : ?string
-    {
-        if ($response) {
-            $http_code = $response->getStatusCode();
-            $server_output = (string)$response->getBody();
-            if ($http_code == 400) { // normal user error
-                try {
-                    $jsonError = json_decode($server_output);
-                    $translatedError = $jsonError->message;
-                    error_log(sprintf("%s : Error = %s [%d]", $context, $translatedError, $http_code), 0);
-                } catch (Exception $e) {
-                    $translatedError = "General error";
-                    error_log(sprintf("%s : Error = %s [%d]", $context, $server_output, $http_code), 0);
-                }
-                throw new TwikeyException($translatedError);
-            } else if ($http_code > 400) {
-                error_log(sprintf("%s : Error = %s (%s)", $context, $server_output, $this->endpoint), 0);
-                throw new TwikeyException("General error");
-            }
-            if (TWIKEY_DEBUG) {
-                error_log(sprintf("Response %s : %s", $context, $server_output), 0);
-            }
-            return $server_output;
-        }
-        error_log(sprintf("Response was strange %s : %s", $context, $response), 0);
-        return null;
+    protected function checkResponse($response, $context = "No context") : ?string {
+        return $this->twikey->checkResponse($response,$context);
     }
 }

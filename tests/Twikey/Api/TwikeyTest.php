@@ -7,6 +7,7 @@ use GuzzleHttp\ClientInterface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Twikey\Api\Callback\DocumentCallback;
+use Twikey\Api\Callback\PaylinkCallback;
 use Twikey\Api\Callback\TransactionCallback;
 
 class TwikeyTest extends TestCase
@@ -37,6 +38,7 @@ class TwikeyTest extends TestCase
             'http_errors' => false,
             'debug' => false
         ]);
+
     }
 
     public function testCreateDocument()
@@ -115,7 +117,21 @@ class TwikeyTest extends TestCase
             public function handle($transaction)
             {
                 print("Transaction " . $transaction->id . ' @ '. $transaction->date . ' has '. $transaction->state . "\n");
+            }
+        });
+        $this->assertIsNumeric($count);
+    }
 
+    public function testLinkFeed()
+    {
+        if (!self::$APIKEY)
+            throw new InvalidArgumentException('Invalid apikey');
+
+        $twikey = new Twikey(self::$httpClient,self::$APIKEY,true);
+        $count = $twikey->link->feed(new class implements PaylinkCallback {
+            public function handle($link)
+            {
+                printf("Link %s for %.2f Euro has state %s\n", $link->id, $link->amount, $link->state);
             }
         });
         $this->assertIsNumeric($count);
@@ -139,42 +155,42 @@ class TwikeyTest extends TestCase
 
 class SampleDocumentCallback implements DocumentCallback {
 
-    function handleNew($update)
+    function handleNew($mandate,$evtTime)
     {
         $kv = array();
-        foreach($update->Mndt->SplmtryData as $attribute){
+        foreach($mandate->SplmtryData as $attribute){
             $kv[$attribute->Key] = $attribute->Value;
         }
 
-        print("New " . $update->Mndt->MndtId . ' @ '. $update->EvtTime . "\n");
+        print("New " . $mandate->MndtId . ' @ '. $evtTime . "\n");
     }
 
-    function handleUpdate($update)
+    function handleUpdate($originalMandateNumber,$mandate,$reason,$evtTime)
     {
         $kv = array();
-        foreach($update->Mndt->SplmtryData as $attribute){
+        foreach($mandate->SplmtryData as $attribute){
             $kv[$attribute->Key] = $attribute->Value;
         }
 
-        $rsn = $update->AmdmntRsn->Rsn;
-        switch ($update->AmdmntRsn->Rsn) {
-            case '_T50': { /* AccountChanged, */ break; }
-            case '_T51': { /* AddressChanged, */ break; }
-            case '_T52': { /* MandateNumberChanged */ break; }
-            case '_T53': { /* Name changed */ break; }
-            case '_T54': { /* Email changed */ break; }
-            case '_T55': { /* Mobile changed */ break; }
-            case '_T56': { /* Language changed */ break; }
+        $rsn = $reason->Rsn;
+        switch ($reason->Rsn) {
+            case '_T50': { $rsn = "AccountChanged,"; break; }
+            case '_T51': { $rsn = "AddressChanged,"; break; }
+            case '_T52': { $rsn = "MandateNumberChanged"; break; }
+            case '_T53': { $rsn = "Name changed"; break; }
+            case '_T54': { $rsn = "Email changed"; break; }
+            case '_T55': { $rsn = "Mobile changed"; break; }
+            case '_T56': { $rsn = "Language changed"; break; }
             default:
                 # code...
                 break;
         }
-        print("Update: " . $update->Mndt->MndtId . ' -> '. $rsn . ' @ '. $update->EvtTime . "\n");
+        print("Update: " . $mandate->MndtId . ' -> '. $rsn . ' @ '. $evtTime . "\n");
     }
 
-    function handleCancel($update)
+    function handleCancel($mandateNumber,$reason,$evtTime)
     {
-        $rsn = $update->CxlRsn->Rsn;
-        print("Cancel: " . $update->OrgnlMndtId . ' -> '. $rsn . ' @ '. $update->EvtTime . "\n");
+        $rsn = $reason->Rsn;
+        print("Cancel: " . $mandateNumber . ' -> '. $rsn . ' @ '. $evtTime . "\n");
     }
 }

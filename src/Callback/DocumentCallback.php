@@ -7,7 +7,7 @@ namespace Twikey\Api\Callback;
  */
 interface DocumentCallback
 {
-    public function handleNew($data);
-    public function handleUpdate($data);
-    public function handleCancel($data);
+    public function handleNew($mandate,$evtTime);
+    public function handleUpdate($originalMandateNumber,$mandate,$reason,$evtTime);
+    public function handleCancel($mandateNumber,$reason,$evtTime);
 }
