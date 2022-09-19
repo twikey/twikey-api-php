@@ -98,7 +98,7 @@ class DocumentGateway extends BaseGateway
             && ($response->getHeader('X-STATE') || $response->getHeader('X-COLLECTABLE'))
         ) {
             $json_response->Mndt->State = current($response->getHeader('X-STATE'));
-            $json_response->Mndt->Collectable = current($response->getHeader('X-COLLECTABLE'));
+            $json_response->Mndt->Collectable = current($response->getHeader('X-COLLECTABLE')) === 'true';
         }
         return $json_response;
     }
