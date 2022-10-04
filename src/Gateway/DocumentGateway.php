@@ -93,7 +93,14 @@ class DocumentGateway extends BaseGateway
     {
         $response = $this->request('GET', sprintf("/creditor/mandate/detail?mndtId=%s&force=%s", $mndtId, $force), []);
         $server_output = $this->checkResponse($response, "Get mandate details!");
-        return json_decode($server_output);
+        $json_response = json_decode($server_output);
+        if ($json_response->Mndt
+            && ($response->getHeader('X-STATE') || $response->getHeader('X-COLLECTABLE'))
+        ) {
+            $json_response->Mndt->State = current($response->getHeader('X-STATE'));
+            $json_response->Mndt->Collectable = current($response->getHeader('X-COLLECTABLE')) === 'true';
+        }
+        return $json_response;
     }
 
 }
