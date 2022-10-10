@@ -179,7 +179,7 @@ class Twikey
      */
     public function request(string $method, string $uri = '', array $options = []): ResponseInterface
     {
-        $fulluri = sprintf("%s/%s", $this->endpoint, $uri);
+        $fulluri = sprintf("%s%s", $this->endpoint, $uri);
         $headers = $options['headers'] ?? [];
         $headers = array_merge($headers, [
             'Accept' => 'application/json',
