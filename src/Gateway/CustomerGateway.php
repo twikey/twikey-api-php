@@ -19,7 +19,7 @@ class CustomerGateway extends BaseGateway
         }
         $response = $this->request(
             'PATCH',
-            \sprintf("creditor/customer/%s", $data['customerNumber']),
+            \sprintf("/creditor/customer/%s", $data['customerNumber']),
             ['query' => $data]
         );
         $server_output = $this->checkResponse($response, "Update a customer!");
