@@ -9,6 +9,7 @@ use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\ResponseInterface;
 use Twikey\Api\Exception\TwikeyException;
 use Twikey\Api\Gateway\CollectionGateway;
+use Twikey\Api\Gateway\CustomerGateway;
 use Twikey\Api\Gateway\DocumentGateway;
 use Twikey\Api\Gateway\InvoiceGateway;
 use Twikey\Api\Gateway\LinkGateway;
@@ -35,6 +36,7 @@ class Twikey
     public InvoiceGateway $invoice;
     public RefundGateway $refund;
     public CollectionGateway $collection;
+    public CustomerGateway $customer;
 
     /**
      * @var ClientInterface
@@ -56,6 +58,7 @@ class Twikey
         $this->invoice = new InvoiceGateway($this);
         $this->refund = new RefundGateway($this);
         $this->collection = new CollectionGateway($this);
+        $this->customer = new CustomerGateway($this);
     }
 
     /**
