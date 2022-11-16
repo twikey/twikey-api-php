@@ -45,7 +45,7 @@ class DocumentGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function cancel($mndtId, $rsn, $notify)
+    public function cancel($mndtId, $rsn, $notify = false)
     {
         $response = $this->request('DELETE', sprintf("/creditor/mandate?mndtId=%s&rsn=%s&notify=%s", $mndtId, $rsn, $notify), []);
         $server_output = $this->checkResponse($response, "Cancel a mandate!");

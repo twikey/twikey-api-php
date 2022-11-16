@@ -1,5 +1,5 @@
 {
-    "name": "vanrijs/twikey-api-php",
+    "name": "twikey/twikey-api-php",
     "description": "Php client to interface with the Twikey api",
     "type": "library",
     "keywords": [
