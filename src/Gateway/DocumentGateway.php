@@ -57,13 +57,23 @@ class DocumentGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed(DocumentCallback $callback): int
+    public function feed(DocumentCallback $callback, $start_position=""): int
     {
+        $url = "/creditor/mandate?include=id&include=mandate&include=person";
         $count = 0;
+        $optionalHeaders = [];
+        if ($start_position != "") {
+            $optionalHeaders["X-RESUME-AFTER"] = $start_position;
+        }
         do {
-            $response = $this->request('GET', "/creditor/mandate", []);
+            $response = $this->request('GET', $url, ['headers' => $optionalHeaders]);
+            // reset to avoid loop
+            $optionalHeaders = [];
             $server_output = $this->checkResponse($response, "Retrieving mandate feed!");
             $updates = json_decode($server_output);
+            $callback->start(
+                $response->getHeaderLine("X-LAST"), count($updates->Messages)
+            );
             foreach ($updates->Messages as $update) {
                 $isUpdate = isset($update->AmdmntRsn);
                 $isCancel = isset($update->CxlRsn);

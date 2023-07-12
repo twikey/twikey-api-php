@@ -20,13 +20,14 @@ const TWIKEY_DEBUG = false;
 
 class Twikey
 {
-    const VERSION = '3.0.1';
+    const VERSION = '3.1.1';
 
     private string $lang = 'en';
     private string $endpoint;
+    private string $user_agent;
     private string $salt = 'own';
-    private string $apiKey;
-    private ?string $privKey;
+    private string $api_key;
+    private ?string $priv_key;
     private int $lastLogin = 0;
     private ?string $apitoken = null;
 
@@ -41,17 +42,18 @@ class Twikey
     /**
      * @var ClientInterface
      */
-    private ClientInterface $httpClient;
+    private ClientInterface $http_client;
 
-    public function __construct(ClientInterface $httpClient, string $apikey, bool $testMode = false, string $privKey = "")
+    public function __construct(ClientInterface $http_client, string $api_key,
+                                string $base_url = "https://api.twikey.com",
+                                string $user_agent = "twikey-php/v" . Twikey::VERSION,
+                                string $priv_key = "")
     {
-        $this->httpClient = $httpClient;
-        $this->endpoint = "https://api.twikey.com";
-        if ($testMode) {
-            $this->endpoint = "https://api.beta.twikey.com";
-        }
-        $this->apiKey = trim($apikey);
-        $this->privKey = trim($privKey);
+        $this->http_client = $http_client;
+        $this->endpoint = $base_url;
+        $this->api_key = trim($api_key);
+        $this->priv_key = trim($priv_key);
+        $this->user_agent = trim($user_agent);
         $this->document = new DocumentGateway($this);
         $this->transaction = new TransactionGateway($this);
         $this->link = new LinkGateway($this);
@@ -115,18 +117,18 @@ class Twikey
         $options['headers'] = [
             'Accept' => 'application/json',
             'Content-Type' => 'application/x-www-form-urlencoded',
-            "User-Agent" => "twikey-php/v" . Twikey::VERSION,
+            "User-Agent" => $this->user_agent,
             "Accept-Language" => $this->lang
         ];
         $options['form_params'] = [
-            "apiToken" => $this->apiKey
+            "apiToken" => $this->api_key
         ];
-        if ($this->privKey != "") {
-            $otp = $this->calcOtp();
+        if ($this->priv_key != "") {
+            $otp = $this->calcOtp($this->priv_key);
             $options['form_params']["otp"] = $otp;
         }
 
-        $response = $this->httpClient->request('POST', $this->endpoint . '/creditor', $options);
+        $response = $this->http_client->request('POST', $this->endpoint . '/creditor', $options);
         if (count($response->getHeader("Authorization")) == 1) {
             $this->apitoken = $response->getHeader("Authorization")[0];
             $this->lastLogin = time();
@@ -148,18 +150,18 @@ class Twikey
     public function logout()
     {
         $options['headers'] = [
-            "User-Agent" => "twikey-php/v" . Twikey::VERSION,
+            "User-Agent" => $this->user_agent,
             "Accept-Language" => $this->lang,
             "Authorization" => $this->apitoken
         ];
-        $response = $this->httpClient->request('GET', $this->endpoint . '/creditor', $options);
+        $response = $this->http_client->request('GET', $this->endpoint . '/creditor', $options);
         if ($response->getStatusCode() >= 400) {
             throw new TwikeyException($response->getReasonPhrase());
         }
     }
 
-    private function calcOtp () : string {
-        $secret = $this->salt . hex2bin($this->privKey);
+    private function calcOtp ($priv_key) : string {
+        $secret = $this->salt . hex2bin($priv_key);
         $len=8;
         $ctr = (int)floor(time() / 30);
 
@@ -187,12 +189,12 @@ class Twikey
         $headers = array_merge($headers, [
             'Accept' => 'application/json',
             'Content-Type' => 'application/x-www-form-urlencoded',
-            "User-Agent" => "twikey-php/v" . Twikey::VERSION,
+            "User-Agent" => $this->user_agent,
             "Accept-Language" => $this->lang,
             "Authorization" => $this->refreshTokenIfRequired()
         ]);
         $options['headers'] = $headers;
-        return $this->httpClient->request($method, $fulluri, $options);
+        return $this->http_client->request($method, $fulluri, $options);
     }
 
     /**
