@@ -186,13 +186,13 @@ class Twikey
     {
         $fulluri = sprintf("%s%s", $this->endpoint, $uri);
         $headers = $options['headers'] ?? [];
-        $headers = array_merge($headers, [
+        $headers = array_merge([
             'Accept' => 'application/json',
             'Content-Type' => 'application/x-www-form-urlencoded',
             "User-Agent" => $this->user_agent,
             "Accept-Language" => $this->lang,
             "Authorization" => $this->refreshTokenIfRequired()
-        ]);
+        ], $headers);
         $options['headers'] = $headers;
         return $this->http_client->request($method, $fulluri, $options);
     }
