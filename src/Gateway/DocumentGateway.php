@@ -9,6 +9,7 @@ use Twikey\Api\Exception\TwikeyException;
 class DocumentGateway extends BaseGateway
 {
     /**
+     * Invite a customer to sign a document
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
