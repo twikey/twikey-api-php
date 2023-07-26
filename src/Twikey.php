@@ -20,7 +20,7 @@ const TWIKEY_DEBUG = false;
 
 class Twikey
 {
-    const VERSION = '3.1.1';
+    const VERSION = '0.3.2';
 
     private string $lang = 'en';
     private string $endpoint;
