@@ -12,6 +12,7 @@ class InvoiceGateway extends BaseGateway
      * @param string $json json_encode'd representation of the invoice
      * @param array|null $optionalHeaders
      * @return mixed|void
+     * @link https://www.twikey.com/api/#create-invoice
      * @throws ClientExceptionInterface
      * @throws TwikeyException
      */
@@ -31,6 +32,7 @@ class InvoiceGateway extends BaseGateway
 
     /**
      * Note this is rate limited
+     * @link https://www.twikey.com/api/#invoice-details
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
@@ -43,6 +45,8 @@ class InvoiceGateway extends BaseGateway
 
     /**
      * Read all updated invoices
+     * @link https://www.twikey.com/api/#invoice-feed
+     *
      * @param InvoiceCallback $callback function to be called for every updated invoice
      * @param string $start_position Optional start position
      * @return int Number of invoices updated

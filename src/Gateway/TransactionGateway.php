@@ -64,17 +64,6 @@ class TransactionGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function collect(int $ct)
-    {
-        $response = $this->request('POST', "/creditor/collect", ['form_params' => ["ct" => $ct]]);
-        $server_output = $this->checkResponse($response, "Retrieving transaction feed!");
-        return json_decode($server_output);
-    }
-
-    /**
-     * @throws TwikeyException
-     * @throws ClientExceptionInterface
-     */
     public function cancel(?string $id, ?string $ref)
     {
         $queryPrefix = isset($id) || isset($ref) ? '?' : null;
@@ -85,4 +74,15 @@ class TransactionGateway extends BaseGateway
         return json_decode($server_output);
     }
 
+    /**
+     * @throws TwikeyException
+     * @throws ClientExceptionInterface
+     * @deprecated Please use the collection gateway
+     */
+    public function collect(int $ct)
+    {
+        $response = $this->request('POST', "/creditor/collect", ['form_params' => ["ct" => $ct]]);
+        $server_output = $this->checkResponse($response, "Retrieving transaction feed!");
+        return json_decode($server_output);
+    }
 }

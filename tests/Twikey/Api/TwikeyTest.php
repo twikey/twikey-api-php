@@ -59,14 +59,14 @@ class TwikeyTest extends TestCase
             "city" => "Liverpool",
             "zip" => "1526",
             "country" => "BE",
-            "mobile" => "",
-            "companyName" => "",
-            "form" => "",
-            "vatno" => "",
-            "iban" => "",
-            "bic" => "",
-            "mandateNumber" => "",
-            "contractNumber" => "",
+            "mobile" => "", // Optional
+            "companyName" => "", // Optional
+            "form" => "", // Optional
+            "vatno" => "", // Optional
+            "iban" => "", // Optional
+            "bic" => "", // Optional
+            "mandateNumber" => "", // Optional
+            "contractNumber" => "", // Optional
         );
 
         $contract = $twikey->document->create($data);
@@ -76,15 +76,23 @@ class TwikeyTest extends TestCase
 
         $twikey->document->feed(new SampleDocumentCallback());
 
+        // Get the customer link
+        if (getenv('MNDTNUMBER') == "") {
+            $this->markTestSkipped(
+                'The mndtNumber is not available.'
+            );
+        }
+        $customerAccess = $twikey->document->customeraccess(getenv('MNDTNUMBER'));
+        $this->assertIsString($customerAccess->url);
+
+        $twikey->document->getPdf(getenv('MNDTNUMBER'));
+
         // Remove the document again
         $twikey->document->cancel($contract->mndtId, "cancel");
     }
 
     public function testCreateTransaction()
     {
-        if (!self::$APIKEY)
-            throw new InvalidArgumentException('Invalid apikey');
-
         if (!self::$APIKEY)
             throw new InvalidArgumentException('Invalid apikey');
 
@@ -107,6 +115,35 @@ class TwikeyTest extends TestCase
         $this->assertIsNumeric($tx->Entries[0]->id);
         $this->assertIsNumeric($tx->Entries[0]->contractId);
         $this->assertNotEmpty($tx->Entries[0]->date);
+    }
+
+    public function testSubscription()
+    {
+        if (!self::$APIKEY)
+            throw new InvalidArgumentException('Invalid apikey');
+
+        if (getenv('MNDTNUMBER') == "") {
+            $this->markTestSkipped(
+                'The mndtNumber is not available.'
+            );
+        }
+
+        $twikey = new Twikey(self::$http_client,self::$APIKEY,"https://api.beta.twikey.com","sdk-php-test/".Twikey::VERSION);
+        $data = array(
+            "mndtId" => getenv('MNDTNUMBER'),
+            "message" => "Message to customer",
+            "ref" => "PhpTestRef",
+            "amount" => 10.00, // 10 euro
+            "recurrence" => "1m", // every month
+            "start" => "2030-01-01"
+        );
+        $subscription = $twikey->subscription->create($data);
+        $this->assertIsNumeric($subscription->id);
+        $this->assertIsNumeric($subscription->amount);
+        $this->assertNotEmpty($subscription->message);
+        $this->assertNotEmpty($subscription->ref);
+        $this->assertEquals("2030-01-01", $subscription->start);
+        $twikey->subscription->cancel(getenv('MNDTNUMBER'), $subscription->ref);
     }
 
     public function testTransactionFeed()
@@ -132,6 +169,16 @@ class TwikeyTest extends TestCase
             throw new InvalidArgumentException('Invalid apikey');
 
         $twikey = new Twikey(self::$http_client,self::$APIKEY,"https://api.beta.twikey.com","sdk-php-test/".Twikey::VERSION);
+        $link = $twikey->link->create([
+            "email" => "no-reply@twikey.com",
+            "message" => "Payment last month",
+            "amount" => "100",
+        ]);
+
+        $this->assertIsNumeric($link->id);
+        $twikey->link->get($link->id);
+        $twikey->link->remove($link->id);
+
         $count = $twikey->link->feed(new class implements PaylinkCallback {
             public function handle($link)
             {
@@ -190,6 +237,10 @@ class TwikeyTest extends TestCase
         );
 
         $invoice = $twikey->invoice->create(json_encode($invoice,JSON_FORCE_OBJECT));
+        $this->assertIsString($invoice->url);
+        $this->assertIsString($invoice->id);
+
+        $invoice = $twikey->invoice->get($invoice->id);
         $this->assertIsString($invoice->url);
         $this->assertIsString($invoice->id);
 

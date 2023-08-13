@@ -10,6 +10,7 @@ class RefundGateway extends BaseGateway
 {
     /**
      * Read until empty
+     * @link https://www.twikey.com/api/#get-credit-transfer-feed
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */

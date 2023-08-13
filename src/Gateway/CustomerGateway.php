@@ -9,6 +9,8 @@ use Twikey\Api\Exception\TwikeyException;
 class CustomerGateway extends BaseGateway
 {
     /**
+     * Update an existing customer
+     * @link https://www.twikey.com/api/#update-a-customer
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */

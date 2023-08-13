@@ -9,6 +9,9 @@ class CollectionGateway extends BaseGateway
 {
 
     /**
+     * Generate a collection to be sent to the bank
+     *
+     * @link https://www.twikey.com/api/#execute-collection
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
@@ -27,8 +30,12 @@ class CollectionGateway extends BaseGateway
     }
 
     /**
+     * Fetches a collections' status
+     *
+     * @link https://www.twikey.com/api/#status-collection
      * @throws TwikeyException
      * @throws ClientExceptionInterface
+     * @deprecated Prefer the Transaction feed as it offers more functionality
      */
     public function get(?int $id, ?string $pmtinfid)
     {

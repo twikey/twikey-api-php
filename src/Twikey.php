@@ -15,12 +15,13 @@ use Twikey\Api\Gateway\InvoiceGateway;
 use Twikey\Api\Gateway\LinkGateway;
 use Twikey\Api\Gateway\RefundGateway;
 use Twikey\Api\Gateway\TransactionGateway;
+use Twikey\Api\Gateway\SubscriptionGateway;
 
 const TWIKEY_DEBUG = false;
 
 class Twikey
 {
-    const VERSION = '0.3.2';
+    const VERSION = '0.4.0';
 
     private string $lang = 'en';
     private string $endpoint;
@@ -38,6 +39,7 @@ class Twikey
     public RefundGateway $refund;
     public CollectionGateway $collection;
     public CustomerGateway $customer;
+    public SubscriptionGateway $subscription;
 
     /**
      * @var ClientInterface
@@ -61,6 +63,7 @@ class Twikey
         $this->refund = new RefundGateway($this);
         $this->collection = new CollectionGateway($this);
         $this->customer = new CustomerGateway($this);
+        $this->subscription = new SubscriptionGateway($this);
     }
 
     /**
