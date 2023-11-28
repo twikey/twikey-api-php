@@ -113,7 +113,7 @@ class Twikey
      */
     public function refreshTokenIfRequired($force = false) : string
     {
-        if (!$force && time() - $this->lastLogin < 23) {
+        if (!$force && (time() - $this->lastLogin) < 82800 /*23 h*/) {
             return $this->apitoken;
         }
 
