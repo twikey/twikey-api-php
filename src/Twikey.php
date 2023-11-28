@@ -21,7 +21,7 @@ const TWIKEY_DEBUG = false;
 
 class Twikey
 {
-    const VERSION = '0.4.0';
+    const VERSION = '0.4.1';
 
     private string $lang = 'en';
     private string $endpoint;

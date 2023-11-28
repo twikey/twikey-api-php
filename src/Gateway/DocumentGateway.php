@@ -137,7 +137,7 @@ class DocumentGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function update($data)
+    public function update(array $data)
     {
         $response = $this->request('POST', "/creditor/mandate/update", ['form_params' => $data]);
         $server_output = $this->checkResponse($response, "Update a mandate!");
@@ -152,7 +152,7 @@ class DocumentGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function customeraccess($mndtId)
+    public function customeraccess(string $mndtId)
     {
         $response = $this->request('POST',  sprintf("/creditor/customeraccess?mndtId=%s", $mndtId), []);
         $server_output = $this->checkResponse($response, "Customeraccess for a mandate!");
