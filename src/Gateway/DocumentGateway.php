@@ -82,7 +82,7 @@ class DocumentGateway extends BaseGateway
                     $callback->handleUpdate($update->OrgnlMndtId,$update->Mndt,$update->AmdmntRsn,$update->EvtTime);
                 } else if ($isCancel) {
                     // handle cancel
-                    $callback->handleCancel($update->OrgnlMndtId,$update->CxlRsn,$update->EvtTime);
+                    $callback->handleCancel($update->OrgnlMndtId,$update->Mndt,$update->CxlRsn,$update->EvtTime);
                 }
             }
         } while(count($updates->Messages) > 0);

@@ -74,7 +74,7 @@ class TwikeyTest extends TestCase
         $this->assertIsString($contract->mndtId);
         $this->assertIsString($contract->key);
 
-        $twikey->document->feed(new SampleDocumentCallback());
+        $twikey->document->feed(new SampleDocumentCallback(), "", ["id","mandate","person","cancelled_mandate"]);
 
         // Get the customer link
         if (getenv('MNDTNUMBER') == "") {
@@ -293,11 +293,12 @@ class SampleDocumentCallback implements DocumentCallback {
         Assert::assertIsString($evtTime);
     }
 
-    function handleCancel($mandateNumber,$reason,$evtTime)
+    function handleCancel($mandateNumber, $mandate, $reason, $evtTime)
     {
         $rsn = $reason->Rsn;
         Assert::assertIsString($mandateNumber);
         Assert::assertIsString($rsn);
+        Assert::assertIsString($mandate->MndtId);
         Assert::assertIsString($evtTime);
     }
 }
