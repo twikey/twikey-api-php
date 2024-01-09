@@ -298,7 +298,9 @@ class SampleDocumentCallback implements DocumentCallback {
         $rsn = $reason->Rsn;
         Assert::assertIsString($mandateNumber);
         Assert::assertIsString($rsn);
-        Assert::assertIsString($mandate->MndtId);
+        if($mandate){ // requires the cancelled_mandate include
+            Assert::assertIsString($mandate->MndtId);
+        }
         Assert::assertIsString($evtTime);
     }
 }
