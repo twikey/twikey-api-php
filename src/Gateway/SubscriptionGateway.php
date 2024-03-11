@@ -17,9 +17,9 @@ class SubscriptionGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function create($data)
+    public function create($data, ?array $optionalHeaders = [])
     {
-        $response = $this->request('POST', '/creditor/subscription', ['form_params' => $data]);
+        $response = $this->request('POST', '/creditor/subscription', ['form_params' => $data, 'headers' => $optionalHeaders]);
         $server_output = $this->checkResponse($response, "Creating a new subscription");
         return json_decode($server_output);
     }

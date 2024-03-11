@@ -14,9 +14,9 @@ class TransactionGateway extends BaseGateway
      * @throws ClientExceptionInterface
      * @throws TwikeyException
      */
-    public function create($data)
+    public function create($data, ?array $optionalHeaders = [])
     {
-        $response = $this->request('POST', "/creditor/transaction", ['form_params' => $data]);
+        $response = $this->request('POST', "/creditor/transaction", ['form_params' => $data, 'headers' => $optionalHeaders]);
         $server_output = $this->checkResponse($response, "Creating a new transaction!");
         return json_decode($server_output);
     }
