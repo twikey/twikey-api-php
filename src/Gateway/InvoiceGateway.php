@@ -53,9 +53,12 @@ class InvoiceGateway extends BaseGateway
      * @throws ClientExceptionInterface
      * @throws TwikeyException
      */
-    public function feed(InvoiceCallback $callback, string $start_position = ""): int
+    public function feed(InvoiceCallback $callback, $start_position = "", $includes = []): int
     {
         $url = "/creditor/invoice";
+        foreach ($includes as $include) {
+            $url .= "include=".$include."&";
+        }
         $count = 0;
         $optionalHeaders = [];
         if ($start_position != "") {

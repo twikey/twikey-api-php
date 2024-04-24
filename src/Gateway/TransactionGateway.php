@@ -44,11 +44,21 @@ class TransactionGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed(TransactionCallback $callback):int
+    public function feed(TransactionCallback $callback, $start_position="", $includes = []):int
     {
+        $url = "/creditor/transaction";
+        foreach ($includes as $include) {
+            $url .= "include=".$include."&";
+        }
         $count = 0;
+        $optionalHeaders = [];
+        if ($start_position != "") {
+            $optionalHeaders["X-RESUME-AFTER"] = $start_position;
+        }
         do {
-            $response = $this->request('GET', "/creditor/transaction", []);
+            $response = $this->request('GET', $url, ['headers' => $optionalHeaders]);
+            // reset to avoid loop
+            $optionalHeaders = [];
             $server_output = $this->checkResponse($response, "Retrieving transaction feed!");
             $transactions = json_decode($server_output);
             foreach ($transactions->Entries as $tx){

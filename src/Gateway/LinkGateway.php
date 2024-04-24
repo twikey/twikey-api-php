@@ -48,15 +48,21 @@ class LinkGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed(PaylinkCallback $callback, $includes = []): int
+    public function feed(PaylinkCallback $callback, $start_position="", $includes = []): int
     {
         $url = "/creditor/payment/link/feed?";
         foreach ($includes as $include) {
             $url .= "include=".$include."&";
         }
         $count = 0;
+        $optionalHeaders = [];
+        if ($start_position != "") {
+            $optionalHeaders["X-RESUME-AFTER"] = $start_position;
+        }
         do {
-            $response = $this->request('GET', $url, []);
+            $response = $this->request('GET', $url, ['headers' => $optionalHeaders]);
+            // reset to avoid loop
+            $optionalHeaders = [];
             $server_output = $this->checkResponse($response, "Retrieving paymentlink feed");
             $json = json_decode($server_output);
             $links = $json->Links;
