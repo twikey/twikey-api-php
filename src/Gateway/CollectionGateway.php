@@ -15,13 +15,12 @@ class CollectionGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function create(int $ct, ?string $colltndt, ?array $mndtId, ?bool $prenotify)
+    public function create(int $ct, ?string $colltndt, ?bool $prenotify)
     {
         $response = $this->request('POST',
-            sprintf('/creditor/collect?ct=%s%s%s%s',
+            sprintf('/creditor/collect?ct=%s%s%s',
                 $ct,
                 isset($colltndt) ? "&colltndt=$colltndt" : null,
-                isset($mndtId) && !empty($mndtId) ? sprintf("&mndtId=%s", implode (',', $mndtId)) : null,
                 isset($prenotify) ? sprintf("&prenotify=%s", $prenotify ? 'true' : 'false') : null),
             []
         );

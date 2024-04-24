@@ -14,9 +14,9 @@ class RefundGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed(RefundCallback $callback, $start_position = "", $includes = []):int
+    public function feed(RefundCallback $callback, $includes = ["seq"], $start_position = ""):int
     {
-        $url = "/creditor/transfer";
+        $url = "/creditor/transfer?";
         foreach ($includes as $include) {
             $url .= "include=".$include."&";
         }

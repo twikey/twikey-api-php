@@ -48,7 +48,7 @@ class LinkGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed(PaylinkCallback $callback, $start_position="", $includes = []): int
+    public function feed(PaylinkCallback $callback, $includes = ["seq"], $start_position=""): int
     {
         $url = "/creditor/payment/link/feed?";
         foreach ($includes as $include) {

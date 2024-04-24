@@ -49,7 +49,7 @@ class DocumentGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed(DocumentCallback $callback, $start_position="", $includes = ["seq","mandate","person"]): int
+    public function feed(DocumentCallback $callback, $includes = ["seq","mandate","person"], $start_position=""): int
     {
         $url = "/creditor/mandate?";
         foreach ($includes as $include) {

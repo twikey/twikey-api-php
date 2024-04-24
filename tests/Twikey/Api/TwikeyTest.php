@@ -74,7 +74,7 @@ class TwikeyTest extends TestCase
         $this->assertIsString($contract->mndtId);
         $this->assertIsString($contract->key);
 
-        $twikey->document->feed(new SampleDocumentCallback(), "", ["id","mandate","person","cancelled_mandate"]);
+        $twikey->document->feed(new SampleDocumentCallback(), ["id","mandate","person","cancelled_mandate"]);
 
         // Get the customer link
         if (getenv('MNDTNUMBER') == "") {
@@ -244,7 +244,7 @@ class TwikeyTest extends TestCase
         $this->assertIsString($invoice->url);
         $this->assertIsString($invoice->id);
 
-        $twikey->invoice->feed(new SampleInvoiceCallback(), "3091701");
+        $twikey->invoice->feed(new SampleInvoiceCallback(), [], "3091701");
 
     }
 

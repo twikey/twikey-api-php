@@ -44,9 +44,9 @@ class TransactionGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function feed(TransactionCallback $callback, $start_position="", $includes = []):int
+    public function feed(TransactionCallback $callback, $includes = ["seq"], $start_position=""):int
     {
-        $url = "/creditor/transaction";
+        $url = "/creditor/transaction?";
         foreach ($includes as $include) {
             $url .= "include=".$include."&";
         }
