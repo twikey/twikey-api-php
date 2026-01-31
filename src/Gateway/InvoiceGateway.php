@@ -82,4 +82,19 @@ class InvoiceGateway extends BaseGateway
         while(count($invoices) > 0);
         return $count;
     }
+
+    /**
+     * Retrieve pdf of a specific invoice.
+     *
+     * @link https://www.twikey.com/api/#retrieve-invoice-pdf
+     *
+     * @throws TwikeyException
+     * @throws ClientExceptionInterface
+     */
+    public function getPdf(string $id)
+    {
+        $response = $this->request('GET', sprintf("/creditor/invoice/%s/pdf", $id), []);
+        $server_output = $this->checkResponse($response, "Get invoice pdf!");
+        return $server_output;
+    }
 }

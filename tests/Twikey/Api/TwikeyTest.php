@@ -254,6 +254,7 @@ class TwikeyTest extends TestCase
             "date" => $invoicedate,
             "duedate" => $duedate,
             "customer" => $customer,
+            "pdf" => base64_encode(file_get_contents(__DIR__ . '/TestResources/empty.pdf')),
         );
 
         $invoice = $twikey->invoice->create(json_encode($invoice,JSON_FORCE_OBJECT));
@@ -263,6 +264,9 @@ class TwikeyTest extends TestCase
         $invoice = $twikey->invoice->get($invoice->id);
         $this->assertIsString($invoice->url);
         $this->assertIsString($invoice->id);
+
+        $pdf = $twikey->invoice->getPdf($invoice->id);
+        $this->assertNotEmpty($pdf);
 
         $twikey->invoice->feed(new SampleInvoiceCallback(), [], "3091701");
 
