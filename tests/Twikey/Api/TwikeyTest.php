@@ -10,6 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Twikey\Api\Callback\DocumentCallback;
 use Twikey\Api\Callback\InvoiceCallback;
 use Twikey\Api\Callback\PaylinkCallback;
+use Twikey\Api\Callback\PaymentCallback;
 use Twikey\Api\Callback\TransactionCallback;
 
 class TwikeyTest extends TestCase
@@ -97,11 +98,11 @@ class TwikeyTest extends TestCase
             throw new InvalidArgumentException('Invalid apikey');
 
         $twikey = new Twikey(self::$http_client,self::$APIKEY,"https://api.beta.twikey.com","sdk-php-test/".Twikey::VERSION);
-        
+
         // Test query with no parameters
         $result = $twikey->document->query();
         $this->assertIsObject($result);
-        
+
         // Test query with specific parameters
         $params = [
             'email' => 'john@doe.com',
@@ -268,7 +269,8 @@ class TwikeyTest extends TestCase
         $pdf = $twikey->invoice->getPdf($invoice->id);
         $this->assertNotEmpty($pdf);
 
-        $twikey->invoice->feed(new SampleInvoiceCallback(), [], "3091701");
+        $twikey->invoice->feed(new SampleInvoiceCallback(), []);
+        $twikey->invoice->payment(new SamplePaymentCallback());
 
     }
 
@@ -342,5 +344,22 @@ class SampleInvoiceCallback implements InvoiceCallback {
         Assert::assertIsObject($invoice);
         Assert::assertIsString($invoice->number);
         Assert::assertIsString($invoice->state);
+    }
+}
+
+class SamplePaymentCallback implements PaymentCallback
+{
+
+    public function start($position, $number_of_updates)
+    {
+        Assert::assertIsString($position);
+        Assert::assertIsInt($number_of_updates);
+    }
+
+    public function handle($payment)
+    {
+        Assert::assertIsObject($payment);
+        Assert::assertIsString($payment->origin);
+        Assert::assertIsString($payment->origin);
     }
 }

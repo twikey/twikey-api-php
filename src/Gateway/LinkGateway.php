@@ -28,7 +28,7 @@ class LinkGateway extends BaseGateway
      * @throws TwikeyException
      * @throws ClientExceptionInterface
      */
-    public function get(int $linkid, string $ref = null)
+    public function get(int $linkid, ?string $ref = null)
     {
         if (empty($ref)) {
             $item = "id=" . $linkid;

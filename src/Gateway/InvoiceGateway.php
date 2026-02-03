@@ -4,6 +4,7 @@ namespace Twikey\Api\Gateway;
 
 use Psr\Http\Client\ClientExceptionInterface;
 use Twikey\Api\Callback\InvoiceCallback;
+use Twikey\Api\Callback\PaymentCallback;
 use Twikey\Api\Exception\TwikeyException;
 
 class InvoiceGateway extends BaseGateway
@@ -80,6 +81,42 @@ class InvoiceGateway extends BaseGateway
             }
         }
         while(count($invoices) > 0);
+        return $count;
+    }
+
+    /**
+     * Read all payment events from invoices
+     * @link https://www.twikey.com/api/#payment-feed
+     *
+     * @param PaymentCallback $callback function to be called for every updated payment update
+     * @param string $start_position Optional start position
+     * @return int Number of invoices updated
+     * @throws ClientExceptionInterface
+     * @throws TwikeyException
+     */
+    public function payment(PaymentCallback $callback, string $start_position = ""): int
+    {
+        $url = "/creditor/invoice/payment/feed";
+        $count = 0;
+        $optionalHeaders = [];
+        if ($start_position != "") {
+            $optionalHeaders["X-RESUME-AFTER"] = $start_position;
+        }
+        do {
+            $response = $this->request('GET', $url, ['headers' => $optionalHeaders]);
+            // reset to avoid loop
+            $optionalHeaders = [];
+            $server_output = $this->checkResponse($response, "Retrieving payment feed!");
+            $json_response = json_decode($server_output);
+            $payments = $json_response->Payments;
+            $callback->start(
+                $response->getHeaderLine("X-LAST"), count($payments)
+            );
+            foreach ($payments as $payment) {
+                $count++;
+                $callback->handle($payment);
+            }
+        } while (count($payments) > 0);
         return $count;
     }
 
