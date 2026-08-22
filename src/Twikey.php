@@ -17,11 +17,10 @@ use Twikey\Api\Gateway\RefundGateway;
 use Twikey\Api\Gateway\TransactionGateway;
 use Twikey\Api\Gateway\SubscriptionGateway;
 
-const TWIKEY_DEBUG = false;
-
 class Twikey
 {
     const VERSION = '0.4.1';
+    const DEBUG = false;
 
     private string $lang = 'en';
     private string $endpoint;
@@ -223,7 +222,7 @@ class Twikey
                 error_log(sprintf("%s : Error = %s (%s)", $context, $server_output, $this->endpoint), 0);
                 throw new TwikeyException("General error");
             }
-            if (TWIKEY_DEBUG) {
+            if (self::DEBUG) {
                 error_log(sprintf("Response %s : %s", $context, $server_output), 0);
             }
             return $server_output;
