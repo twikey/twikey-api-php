@@ -30,7 +30,6 @@
         "cbc"
     ],
     "homepage": "https://api.twikey.com",
-    "version": "0.7.0",
     "require": {
         "php": "^7.4 || ^8.0",
         "psr/http-client": "^1.0.1",
