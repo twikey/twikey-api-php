@@ -215,9 +215,10 @@ class Twikey
                     error_log(sprintf("%s : Error = %s: %s [%d]", $context, $twikeyCode, $translatedError, $http_code), 0);
                 } catch (Exception $e) {
                     $translatedError = "General error";
+                    $twikeyCode = "err_unknown";
                     error_log(sprintf("%s : Error = %s [%d]", $context, $server_output, $http_code), 0);
                 }
-                throw new TwikeyException($translatedError);
+                throw new TwikeyException($translatedError, $twikeyCode);
             } else if ($http_code > 400) {
                 error_log(sprintf("%s : Error = %s (%s)", $context, $server_output, $this->endpoint), 0);
                 throw new TwikeyException("General error");
